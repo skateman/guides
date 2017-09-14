@@ -16,6 +16,7 @@
   ```bash
   sudo dnf -y install git-all                            # Git and components
   sudo dnf -y install memcached                          # Memcached for the session store
+  sudo dnf -y install redis                              # Redis for the asynchronous notifications
   sudo dnf -y install postgresql-devel postgresql-server # PostgreSQL Database server and to build 'pg' Gem
   sudo dnf -y install bzip2 libffi-devel readline-devel  # For rbenv install 2.2.0 (might not be needed with other Ruby setups)
   sudo dnf -y install libxml2-devel libxslt-devel patch  # For Nokogiri Gem
@@ -52,6 +53,13 @@
   sudo systemctl start memcached
   ```
 
+* Enable Redis
+
+  ```bash
+  sudo systemctl enable redis
+  sudo systemctl start redis
+  ```
+
 * Configure PostgreSQL
   * Required PostgreSQL version is 9.4+.
     * See [here](developer_setup/postgresql_software_collection.md) how to install
@@ -76,6 +84,7 @@
   ```bash
   sudo apt install ruby git                         # Git and components
   sudo apt install memcached                        # Memcached for the session store
+  sudo apt install redis                            # Redis for asynchronous notifications
   sudo apt install postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
   sudo apt install bzip2 libffi-dev libreadline-dev # For rbenv install 2.2.0 (might not be needed with other Ruby setups)
   sudo apt install libxml2-dev libxslt-dev patch    # For Nokogiri Gem
@@ -136,6 +145,13 @@
   sudo systemctl start memcached
   ```
 
+* Enable Redis
+
+  ```bash
+  sudo systemctl enable redis
+  sudo systemctl start redis
+  ```
+
 * Configure PostgreSQL
 
   ```bash
@@ -156,6 +172,7 @@
   ```bash
   brew install git
   brew install memcached
+  brew install redis
   brew install postgresql
   brew install cmake
   brew install node
@@ -189,6 +206,9 @@
   ln -sfv /usr/local/opt/memcached/homebrew.mxcl.memcached.plist ~/Library/LaunchAgents
   launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist
   ```
+
+* Start redis
+TODO: someone with a Mac please ;)
 
 ### Install Ruby and Bundler
 
@@ -328,3 +348,16 @@ bundle config build.nokogiri --use-system-libraries --with-xml2-include=$(brew -
 bundle config specific_platform true
 bundle install
 ```
+
+#### Additional settings
+
+* Using Redis for asynchronous notifications
+
+Historically we were using PostgreSQL LISTEN/NOTIFY as the backend for notifications. However, Redis got available
+on the appliance as the new default backend. To have it configured on an existing setup, run the following command:
+
+```
+cp config/cable.yml.sample config/cable.yml
+```
+
+Note that the notifications will continue to work with the PG backend as well.

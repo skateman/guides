@@ -10,6 +10,7 @@
 * Thin
 * PostgreSQL
 * Memcached
+* Redis
 * Console
 
 ## Server Roles
